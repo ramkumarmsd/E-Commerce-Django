@@ -1,0 +1,142 @@
+{% include 'index.html' %}
+{% load static %}
+{% block content %}
+     
+<div class="container">
+    <div class="row" style="margin-top: 20px;font-family: 'Comme', sans-serif;">
+        <div class="col-12">
+            <h4 style="text-align: center;">{{datas.name | upper}} Details</h4>
+            <hr style="border-color: rgb(0, 0, 0);">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'home' %}">Collections</a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'products' datas.catagory.name %}">Products</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">{{datas.name}}</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="col-3">
+            <div class="card " style="width: 18rem;">
+                <img class="card-img-top" src="{{datas.product_image.url}}" alt="Card image cap" height="250px">
+                {% if datas.trending %}
+                <div class="top-right">Hot</div>  
+                {% endif %}          
+            </div>    
+        </div>
+        <div class="col-9">
+            <div class="card-body">
+                <h5 class="card-title">{{datas.name | upper}}</h5>
+                <p class="card-text">{{datas.description}}</p>
+                <p style="color: red;">Current price : <del><i class="bi bi-currency-rupee"></i>{{datas.original_price}}</del></p>
+                <h6 style="color: blue;">Offer price :<i class="bi bi-currency-rupee"></i>{{datas.selling_price}}</h6>
+                
+                {% if datas.quantity > 0 %}
+                
+                <input type="hidden" value="{{datas.id}}" id="pid" >
+            
+                <div class="input-group-sm mb-2" style="width: 130px;">
+                    <div class="input-group input-group-sm ">
+                      <button class="btn btn-secondary btn-sm" id="btn_minus" type="button"><i class="bi bi-dash"></i></button>
+                      <input type="text" name="qtn" class="form-control text-center" value="1" id="txt_qtn" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                      <button class="btn btn-secondary btn-sm"  id="btn_plus" type="button"><i class="bi bi-plus-lg"></i></button>
+                    </div>
+                </div>
+                <button type="button" id="cart" class="btn btn-success btn-sm "><i class="bi bi-cart-plus-fill"> Add to cart</i> </button>
+
+                {% else %}
+
+                <button type="button" class="btn btn-danger btn-sm "><i class="bi bi-cart-x-fill"> Out of stock</i> </button>
+
+                {% endif %}                
+                <button type="button" id="fav" class="btn btn-danger btn-sm "><i class="bi bi-heart-fill"></i></button>            
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded",function(event){
+        const btn_minus = document.getElementById("btn_minus");
+        const btn_plus = document.getElementById("btn_plus");
+        const txt_qtn = document.getElementById("txt_qtn");
+        const pid = document.getElementById("pid");
+        const cart = document.getElementById("cart");
+        const fav = document.getElementById("fav");
+
+        btn_minus.addEventListener("click",function() {
+
+        let qtn = parseInt(txt_qtn.value,10);
+        qtn=isNaN(qtn)?0:qtn;
+        if (qtn>1){
+        qtn--;
+        txt_qtn.value=qtn;
+    }});
+        btn_plus.addEventListener("click",function() {
+
+        let qtn = parseInt(txt_qtn.value,10);
+        qtn=isNaN(qtn)?0:qtn;
+        if (qtn<10){
+        qtn++;
+        txt_qtn.value=qtn;
+        }});
+
+        cart.addEventListener("click",function() {
+
+        let qtn = parseInt(txt_qtn.value,10);
+        qtn=isNaN(qtn)?0:qtn;
+        if (qtn>0){
+            let post_obj= {
+                'product_qtn' : qtn,
+                'pid' : pid.value
+            }
+        //console.log(post_obj);
+        fetch("/carts",{
+            method :'POST',
+            credentials:'same-origin',
+            headers:{
+                'Accept':'application/json',
+                'X-Requested-With':'XMLHttpRequest',
+                'X-CSRFToken':'{{csrf_token}}',
+            },
+                body: JSON.stringify(post_obj)
+            }).then(response => {
+                return response.json();
+            }).then(data => {
+               // console.log(data);
+               alert(data['status'])
+            });
+            }
+        else{
+            alert("please add quantity");
+        }
+       
+        });
+
+
+        fav.addEventListener("click",function() {
+            let post_obj= {
+                'pid' : pid.value
+            }
+        //console.log(post_obj);
+        fetch("/favourites",{
+            method :'POST',
+            credentials:'same-origin',
+            headers:{
+                'Accept':'application/json',
+                'X-Requested-With':'XMLHttpRequest',
+                'X-CSRFToken':'{{csrf_token}}',
+            },
+                body: JSON.stringify(post_obj)
+            }).then(response => {
+                return response.json();
+            }).then(data => {
+            // console.log(data);
+            alert(data['status'])
+            });
+            });
+
+
+    });
+</script>
+{% include 'footer.html' %}
+{% endblock %}

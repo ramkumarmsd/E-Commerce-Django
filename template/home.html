@@ -1,0 +1,40 @@
+{% include 'index.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container" style="margin-top: 30px;">
+    <div class="col-12 ">  
+        <div class="card-body text-center">
+        <h4 class="card-title">Best sellers</h4>
+        <p class="card-text">Our most popular products are sales in low price</p>
+        <a href="{% url 'login' %}" class="card-link btn btn-secondary">Already User</a>
+        <a href="{% url 'register' %}" class="card-link btn btn-success">Register</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row" style="margin-top: 20px;background-color:whitesmoke;padding: 30px;border-radius: 10px;font-family:'Comme', sans-serif;">
+       
+        <div class="col-12" style="margin-top: 20px;">
+            <h5 style="text-align: left;color: rgb(0, 0, 0);">Categories</h5>
+            <hr style="border-color: rgb(0, 0, 0);">
+        </div>
+        {% for data in datas %}
+            <div class="col-3" style="margin-top: 10px;">
+                <div class="card bg-light mb-3" style="height:17rem;">
+                    <a href="{% url 'products' data.name %}">
+                    <img class="card-img-top" src="{{data.image.url}}" alt="Card image cap" height="150px">
+                    <div class="card-body">
+                    <p style="text-align: center;">{{data.name}}</p></a>
+                    <p class="card-text">{{data.description}}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+    </div>
+</div>
+{% include 'footer.html' %}
+ 
+{% endblock%}

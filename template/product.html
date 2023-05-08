@@ -1,0 +1,27 @@
+{% include 'index.html' %}
+{% load static %}
+{% block content %}
+     
+<div class="container" style="margin-top: 80px;">
+    <div class="row" style="margin-top: 20px;background-color: whitesmoke;padding: 10px;border-radius: 10px;font-family:'Comme', sans-serif;">
+        <div class="col-12">
+            <h5 style="text-align: left;">{{pname}} Product</h5>
+            <hr style="border-color: rgb(0, 0, 0);">
+        </div>
+        {% for data in datas %}
+            <div class="col-3" style="margin-top: 10px;">
+                <div class="card text-center  bg-light mb-3" style="height:16rem;">
+                    <img class="card-img-top" src="{{data.product_image.url}}" alt="Card image cap" height="150px">
+                    <div class="card-body">
+                    <a href="{% url 'productview' pname data.name %}"><h6 class="card-title">{{data.name}}</h6></a>
+                    <span class="float-left"><del><i class="bi bi-currency-rupee">{{data.original_price}}</i></del></span>
+                    <span class="float-right"><div class="badge badge-success"><i class="bi bi-currency-rupee">{{data.selling_price}}</i></div></span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'footer.html' %}
+
+{% endblock %}

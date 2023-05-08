@@ -1,0 +1,60 @@
+{% include 'index.html' %}
+{% load static %}
+{% block content %}
+     
+<div class="container" style="margin-bottom: 100px;">
+
+    <div class="row" style="margin-top: 20px;background-color: whitesmoke;padding: 30px;border-radius: 10px;font-family: 'Comme', sans-serif;">
+        <div class="col-12">
+            <h3 style="text-align: center;color: rgb(0, 0, 0);"><i>Cart items</i></h3>
+        </div>
+        {% if datas %}
+        <div class="col-12" style="margin-top: 30px;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+               
+                {% for data in datas %}
+                <tbody>
+                    <tr>
+                        <td><img src="{{data.products.product_image.url}}" height="50px" width="50px"></td>
+                        <td>{{data.products.name}}</td>
+                        <td>{{data.product_qtn}}</td>
+                        <td>{{data.products.selling_price}}</td>
+                        <td class="amt">{{data.total_cost}}</td>
+                        <td><a class="badge badge-danger" onclick="return confirm('Are you sure to remove')" href="{% url 'remove_cart' data.id %}"><i class="bi bi-trash3-fill"> Remove</i></a></td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><b>Total Amount :</b></td>
+                        <td id="net">0</td>
+                    </tr>    
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+<script>
+    const nodes = document.querySelectorAll('.amt');
+    const arr = Array.from(nodes);
+    const res = arr.reduce((acc, curr) => {
+        return acc+= Number(curr.textContent)
+    },0);
+    document.getElementById("net").innerHTML='<i class="bi bi-currency-rupee"></i>'+ res;
+</script>
+{% include 'footer.html' %}
+
+{% endblock %}
